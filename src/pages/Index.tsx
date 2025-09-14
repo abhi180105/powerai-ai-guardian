@@ -9,7 +9,19 @@ import {
   Navigation,
   Bot,
   AlertTriangle,
-  Users
+  Users,
+  Settings,
+  ChevronLeft,
+  Mic,
+  Heart,
+  Star,
+  Clock,
+  TrendingUp,
+  Award,
+  Smartphone,
+  Wifi,
+  Volume2,
+  Bell
 } from 'lucide-react';
 
 import Header from '../components/Header';
@@ -65,7 +77,7 @@ const PowerAIDashboard = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <div className="px-6 space-y-6 pb-8">
+      <div className="px-4 sm:px-6 space-y-4 sm:space-y-6 pb-8">
         {/* Battery Card */}
         <BatteryCard 
           batteryLevel={batteryLevel}
@@ -74,39 +86,78 @@ const PowerAIDashboard = () => {
           isCharging={isCharging}
         />
         
+        {/* Quick Stats Row */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="gradient-card rounded-2xl p-4 text-center">
+            <Clock size={20} className="text-primary mx-auto mb-2" />
+            <div className="text-xs text-muted-foreground">Screen Time</div>
+            <div className="text-sm font-semibold text-foreground">4h 23m</div>
+          </div>
+          <div className="gradient-card rounded-2xl p-4 text-center">
+            <TrendingUp size={20} className="text-battery-green mx-auto mb-2" />
+            <div className="text-xs text-muted-foreground">Efficiency</div>
+            <div className="text-sm font-semibold text-foreground">87%</div>
+          </div>
+          <div className="gradient-card rounded-2xl p-4 text-center">
+            <Award size={20} className="text-battery-yellow mx-auto mb-2" />
+            <div className="text-xs text-muted-foreground">Score</div>
+            <div className="text-sm font-semibold text-foreground">92</div>
+          </div>
+        </div>
+        
         {/* App Usage Analytics */}
         <AppUsageCard apps={mockApps} />
         
-        {/* Action Buttons */}
-        <div className="space-y-4">
+        {/* Action Buttons Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <ActionButton
             title="Optimize Apps"
-            description="AI-powered battery optimization"
+            description="AI-powered optimization"
             icon={Zap}
             variant="primary"
             onClick={() => {/* Optimization logic */}}
           />
           
           <ActionButton
-            title="Travel Guardian Mode"
-            description="Offline navigation with battery optimization"
+            title="Travel Guardian"
+            description="Offline navigation"
             icon={Navigation}
             onClick={() => setCurrentScreen('travel')}
           />
           
           <ActionButton
-            title="Virtual Assistant"
-            description="AI-powered battery guidance"
+            title="AI Assistant"
+            description="Voice-powered guidance"
             icon={Bot}
             onClick={() => setCurrentScreen('assistant')}
           />
           
           <ActionButton
-            title="Emergency Contacts"
-            description="Critical battery alert contacts"
-            icon={Users}
+            title="Emergency Hub"
+            description="Critical alerts & contacts"
+            icon={Shield}
             onClick={() => setCurrentScreen('contacts')}
           />
+        </div>
+        
+        {/* Bottom Quick Actions */}
+        <div className="grid grid-cols-4 gap-2 mt-6">
+          <button className="flex flex-col items-center p-3 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-colors">
+            <Settings size={20} className="text-muted-foreground mb-1" />
+            <span className="text-xs text-muted-foreground">Settings</span>
+          </button>
+          <button className="flex flex-col items-center p-3 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-colors">
+            <Smartphone size={20} className="text-muted-foreground mb-1" />
+            <span className="text-xs text-muted-foreground">Device</span>
+          </button>
+          <button className="flex flex-col items-center p-3 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-colors">
+            <Bell size={20} className="text-muted-foreground mb-1" />
+            <span className="text-xs text-muted-foreground">Alerts</span>
+          </button>
+          <button className="flex flex-col items-center p-3 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-colors">
+            <Star size={20} className="text-muted-foreground mb-1" />
+            <span className="text-xs text-muted-foreground">Premium</span>
+          </button>
         </div>
       </div>
     </div>
@@ -114,28 +165,43 @@ const PowerAIDashboard = () => {
 
   const renderTravelGuardian = () => (
     <div className="min-h-screen bg-background">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center gap-3 mb-6">
           <button 
             onClick={() => setCurrentScreen('dashboard')}
-            className="p-2 rounded-xl bg-secondary/50 hover:bg-secondary/80"
+            className="p-3 rounded-2xl bg-secondary/50 hover:bg-secondary/80 transition-all active:scale-95"
           >
-            ←
+            <ChevronLeft size={20} className="text-foreground" />
           </button>
-          <div>
-            <h1 className="text-headline text-foreground">Travel Guardian</h1>
+          <div className="flex-1">
+            <h1 className="text-headline text-foreground flex items-center gap-2">
+              <Navigation size={24} className="text-primary" />
+              Travel Guardian
+            </h1>
             <p className="text-caption">Offline navigation & battery optimization</p>
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Map placeholder */}
-          <div className="gradient-card rounded-3xl p-8 shadow-elevation-2 text-center">
-            <MapPin size={48} className="text-primary mx-auto mb-4" />
+          <div className="gradient-card rounded-3xl p-6 sm:p-8 shadow-elevation-2 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center">
+              <MapPin size={32} className="text-primary" />
+            </div>
             <h3 className="text-title mb-2">Offline Map Ready</h3>
-            <p className="text-caption mb-4">
+            <p className="text-caption mb-6">
               Battery-optimized routing available for 50km radius
             </p>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="bg-secondary/30 rounded-2xl p-3 text-center">
+                <Wifi size={20} className="text-battery-green mx-auto mb-1" />
+                <div className="text-xs text-muted-foreground">Offline Ready</div>
+              </div>
+              <div className="bg-secondary/30 rounded-2xl p-3 text-center">
+                <Zap size={20} className="text-battery-yellow mx-auto mb-1" />
+                <div className="text-xs text-muted-foreground">Power Saving</div>
+              </div>
+            </div>
             <ActionButton
               title="Start Navigation"
               icon={Navigation}
@@ -143,19 +209,37 @@ const PowerAIDashboard = () => {
             />
           </div>
 
-          <div className="gradient-card rounded-3xl p-6 shadow-elevation-1">
-            <h3 className="text-title mb-4">Travel Settings</h3>
+          <div className="gradient-card rounded-3xl p-4 sm:p-6 shadow-elevation-1">
+            <h3 className="text-title mb-4 flex items-center gap-2">
+              <Settings size={20} className="text-primary" />
+              Travel Settings
+            </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-2xl">
-                <span className="text-sm">Battery Saver Mode</span>
-                <div className="w-12 h-6 bg-primary rounded-full flex items-center justify-end pr-1">
-                  <div className="w-5 h-5 bg-white rounded-full"></div>
+              <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl hover:bg-secondary/50 transition-colors">
+                <div className="flex items-center gap-3">
+                  <Zap size={16} className="text-battery-green" />
+                  <span className="text-sm font-medium">Battery Saver Mode</span>
+                </div>
+                <div className="w-12 h-6 bg-primary rounded-full flex items-center justify-end pr-1 transition-all">
+                  <div className="w-5 h-5 bg-white rounded-full shadow-md"></div>
                 </div>
               </div>
-              <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-2xl">
-                <span className="text-sm">Offline Maps</span>
-                <div className="w-12 h-6 bg-primary rounded-full flex items-center justify-end pr-1">
-                  <div className="w-5 h-5 bg-white rounded-full"></div>
+              <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl hover:bg-secondary/50 transition-colors">
+                <div className="flex items-center gap-3">
+                  <MapPin size={16} className="text-primary" />
+                  <span className="text-sm font-medium">Offline Maps</span>
+                </div>
+                <div className="w-12 h-6 bg-primary rounded-full flex items-center justify-end pr-1 transition-all">
+                  <div className="w-5 h-5 bg-white rounded-full shadow-md"></div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl hover:bg-secondary/50 transition-colors">
+                <div className="flex items-center gap-3">
+                  <Volume2 size={16} className="text-battery-yellow" />
+                  <span className="text-sm font-medium">Voice Navigation</span>
+                </div>
+                <div className="w-12 h-6 bg-secondary rounded-full flex items-center justify-start pl-1 transition-all">
+                  <div className="w-5 h-5 bg-muted-foreground rounded-full shadow-md"></div>
                 </div>
               </div>
             </div>
@@ -167,66 +251,101 @@ const PowerAIDashboard = () => {
 
   const renderVirtualAssistant = () => (
     <div className="min-h-screen bg-background">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center gap-3 mb-6">
           <button 
             onClick={() => setCurrentScreen('dashboard')}
-            className="p-2 rounded-xl bg-secondary/50 hover:bg-secondary/80"
+            className="p-3 rounded-2xl bg-secondary/50 hover:bg-secondary/80 transition-all active:scale-95"
           >
-            ←
+            <ChevronLeft size={20} className="text-foreground" />
           </button>
-          <div>
-            <h1 className="text-headline text-foreground">Virtual Assistant</h1>
-            <p className="text-caption">AI-powered battery guidance</p>
+          <div className="flex-1">
+            <h1 className="text-headline text-foreground flex items-center gap-2">
+              <Bot size={24} className="text-primary" />
+              AI Assistant
+            </h1>
+            <p className="text-caption">Voice-powered battery guidance</p>
           </div>
+          <button className="p-3 rounded-2xl bg-primary/20 hover:bg-primary/30 transition-all active:scale-95">
+            <Mic size={20} className="text-primary" />
+          </button>
         </div>
 
-        <div className="space-y-6">
-          <div className="gradient-card rounded-3xl p-6 shadow-elevation-2">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="gradient-card rounded-3xl p-4 sm:p-6 shadow-elevation-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg">
                 <Bot size={24} className="text-white" />
               </div>
-              <div>
+              <div className="flex-1">
                 <h3 className="text-title">PowerAI Assistant</h3>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-battery-green rounded-full animate-pulse"></div>
                   <span className="text-caption">Online & Ready</span>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-battery-green/20 rounded-full flex items-center justify-center">
+                  <Heart size={16} className="text-battery-green" />
+                </div>
+                <span className="text-xs text-muted-foreground">92%</span>
+              </div>
             </div>
 
             <div className="space-y-4">
-              <div className="bg-primary/10 p-4 rounded-2xl border-l-4 border-primary">
-                <p className="text-sm text-foreground">
-                  "Based on your current usage pattern, I recommend closing Instagram and enabling battery saver mode to extend your battery life by approximately 2 hours."
-                </p>
+              <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-2xl border-l-4 border-primary relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-full -translate-y-4 translate-x-4"></div>
+                <div className="flex items-start gap-3">
+                  <Bot size={16} className="text-primary mt-1 flex-shrink-0" />
+                  <p className="text-sm text-foreground leading-relaxed">
+                    "Based on your current usage pattern, I recommend closing Instagram and enabling battery saver mode to extend your battery life by approximately 2 hours."
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <button className="p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-colors">
+                <button className="flex items-center gap-2 p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-all active:scale-95">
+                  <Zap size={16} className="text-battery-yellow" />
                   Battery Tips
                 </button>
-                <button className="p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-colors">
+                <button className="flex items-center gap-2 p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-all active:scale-95">
+                  <TrendingUp size={16} className="text-primary" />
                   Usage Analysis
                 </button>
-                <button className="p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-colors">
+                <button className="flex items-center gap-2 p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-all active:scale-95">
+                  <Settings size={16} className="text-muted-foreground" />
                   Power Settings
                 </button>
-                <button className="p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-colors">
+                <button className="flex items-center gap-2 p-3 bg-secondary/50 rounded-2xl text-sm hover:bg-secondary/80 transition-all active:scale-95">
+                  <AlertTriangle size={16} className="text-destructive" />
                   Emergency Help
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="gradient-card rounded-3xl p-6 shadow-elevation-1">
-            <h3 className="text-title mb-4">Voice Commands</h3>
-            <div className="space-y-2">
-              <div className="text-sm text-muted-foreground">• "Hey PowerAI, optimize my battery"</div>
-              <div className="text-sm text-muted-foreground">• "Show me battery-heavy apps"</div>
-              <div className="text-sm text-muted-foreground">• "Enable travel mode"</div>
-              <div className="text-sm text-muted-foreground">• "How long until empty?"</div>
+          <div className="gradient-card rounded-3xl p-4 sm:p-6 shadow-elevation-1">
+            <h3 className="text-title mb-4 flex items-center gap-2">
+              <Mic size={20} className="text-primary" />
+              Voice Commands
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-2xl hover:bg-secondary/50 transition-colors">
+                <Volume2 size={16} className="text-primary" />
+                <span className="text-sm text-foreground">"Hey PowerAI, optimize my battery"</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-2xl hover:bg-secondary/50 transition-colors">
+                <Volume2 size={16} className="text-primary" />
+                <span className="text-sm text-foreground">"Show me battery-heavy apps"</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-2xl hover:bg-secondary/50 transition-colors">
+                <Volume2 size={16} className="text-primary" />
+                <span className="text-sm text-foreground">"Enable travel mode"</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-secondary/30 rounded-2xl hover:bg-secondary/50 transition-colors">
+                <Volume2 size={16} className="text-primary" />
+                <span className="text-sm text-foreground">"How long until empty?"</span>
+              </div>
             </div>
           </div>
         </div>
@@ -236,17 +355,20 @@ const PowerAIDashboard = () => {
 
   const renderEmergencyContacts = () => (
     <div className="min-h-screen bg-background">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center gap-3 mb-6">
           <button 
             onClick={() => setCurrentScreen('dashboard')}
-            className="p-2 rounded-xl bg-secondary/50 hover:bg-secondary/80"
+            className="p-3 rounded-2xl bg-secondary/50 hover:bg-secondary/80 transition-all active:scale-95"
           >
-            ←
+            <ChevronLeft size={20} className="text-foreground" />
           </button>
-          <div>
-            <h1 className="text-headline text-foreground">Emergency Contacts</h1>
-            <p className="text-caption">Critical battery alert contacts</p>
+          <div className="flex-1">
+            <h1 className="text-headline text-foreground flex items-center gap-2">
+              <Shield size={24} className="text-destructive" />
+              Emergency Hub
+            </h1>
+            <p className="text-caption">Critical battery alert management</p>
           </div>
         </div>
 

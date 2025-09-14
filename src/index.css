@@ -112,8 +112,16 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-glow);
   }
   
-  .card-elevation {
+  .shadow-elevation-1 {
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .shadow-elevation-2 {
     box-shadow: var(--shadow-md);
+  }
+  
+  .shadow-elevation-3 {
+    box-shadow: var(--shadow-lg);
   }
   
   .gradient-hero {
@@ -142,8 +150,8 @@ All colors MUST be HSL.
   }
   
   /* Battery level color utilities */
-  .battery-critical { color: hsl(var(--battery-red)); }
-  .battery-low { color: hsl(var(--battery-orange)); }
-  .battery-moderate { color: hsl(var(--battery-yellow)); }
-  .battery-healthy { color: hsl(var(--battery-green)); }
+  .battery-red { color: hsl(var(--battery-red)); }
+  .battery-orange { color: hsl(var(--battery-orange)); }
+  .battery-yellow { color: hsl(var(--battery-yellow)); }
+  .battery-green { color: hsl(var(--battery-green)); }
 }
