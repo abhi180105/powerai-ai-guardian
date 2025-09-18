@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power AI - Battery Optimization</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --samsung-dark: #0a0a1a;
+            --samsung-card: #151528;
+            --samsung-blue: #008cff;
+            --samsung-purple: #7b68ee;
+            --samsung-accent: #00d9ff;
+            --samsung-red: #ff3366;
+            --samsung-green: #00c896;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0c0;
+            --gradient-bg: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            --gradient-primary: linear-gradient(90deg, var(--samsung-blue), var(--samsung-purple));
+            --gradient-accent: linear-gradient(90deg, var(--samsung-green), var(--samsung-accent));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .phone-mockup {
+            width: 360px;
+            height: 740px;
+            background: var(--samsung-dark);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .app-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background: var(--gradient-bg);
+        }
+
+        .screen {
+            display: none;
+            padding: 20px;
+            height: calc(100% - 70px);
+            overflow-y: auto;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .nav-bar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 20px;
+            background-color: rgba(21, 21, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--samsung-blue);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .card {
+            background-color: var(--samsung-card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Dashboard Screen */
+        .battery-gauge {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .gauge-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--samsung-blue) 0%, var(--samsung-purple) 78%, #333 78%, #333 100%);
+            mask: radial-gradient(transparent 65%, black 66%);
+            -webkit-mask: radial-gradient(transparent 65%, black 66%);
+        }
+
+        .gauge-inner {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            background-color: var(--samsung-card);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .battery-percent {
+            font-size: 36px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .time-remaining {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .quick-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: linear-gradient(135deg, var(--samsung-card), #2a2a4a);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-icon {
+            font-size: 24px;
+            color: var(--samsung-blue);
+        }
+
+        .action-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .usage-graph {
+            height: 150px;
+            margin-top: 20px;
+        }
+
+        /* Travel Guardian Screen */
+        .travel-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px 12px 48px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-btn {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .route-btn {
+            background: var(--gradient-accent);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .map-container {
+            height: 300px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+        }
+
+        .travel-prediction {
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .prediction-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .prediction-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Battery Health Screen */
+        .app-usage-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .app-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .app-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--gradient-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        .app-details {
+            flex: 1;
+        }
+
+        .app-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .app-usage {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .app-battery {
+            font-weight: 600;
+            color: var(--samsung-blue);
+        }
+
+        .optimize-btn {
+            background: var(--samsung-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .optimize-btn:hover {
+            background: var(--samsung-green);
+            transform: translateY(-2px);
+        }
+
+        /* AI Chat Screen */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #2a2a4a, #1e1e3e);
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--gradient-primary);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message-time {
+            font-size: 10px;
+            opacity: 0.6;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .chat-input-field {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 20px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .chat-send {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .new-chat-btn {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-weight: 600;
+            margin-top: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Emergency Contacts Screen */
+        .emergency-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .add-contact-btn {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+        }
+
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: var(--gradient-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        .contact-details {
+            flex: 1;
+        }
+
+        .contact-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .contact-number {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .contact-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--samsung-blue);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Glowing effects */
+        .glow-primary {
+            box-shadow: 0 0 10px rgba(0, 140, 255, 0.5), 0 0 20px rgba(0, 140, 255, 0.3);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-mockup">
+        <div class="app-container">
+            <!-- Dashboard Screen -->
+            <div id="dashboard" class="screen active">
+                <h1>Power AI</h1>
+                
+                <div class="card">
+                    <div class="battery-gauge">
+                        <div class="gauge-bg"></div>
+                        <div class="gauge-inner">
+                            <div class="battery-percent">78%</div>
+                            <div class="time-remaining">12h 45m remaining</div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <div class="action-btn glow-primary">
+                            <div class="action-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="action-text">Optimize</div>
+                        </div>
+                        <div class="action-btn">
+                            <div class="action-icon"><i class="fas fa-battery-quarter"></i></div>
+                            <div class="action-text">Power Saver</div>
+                        </div>
+                        <div class="action-btn">
+                            <div class="action-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="action-text">Travel Guardian</div>
+                        </div>
+                    </div>
+                    
+                    <div class="usage-graph">
+                        <canvas id="usageChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Battery Health</h2>
+                    <div style="height: 10px; background: #333; border-radius: 5px; margin: 16px 0;">
+                        <div style="width: 92%; height: 100%; background: var(--gradient-primary); border-radius: 5px;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 12px;">
+                        <span>Capacity: 92%</span>
+                        <span>Last charged: 5h ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Travel Guardian Screen -->
+            <div id="travel" class="screen">
+                <h1>Travel Guardian</h1>
+                
+                <div class="card">
+                    <div class="travel-search">
+                        <div class="search-input-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Enter your destination">
+                        </div>
+                        <button class="search-btn">Go</button>
+                    </div>
+                    
+                    <button class="route-btn">
+                        <i class="fas fa-route"></i> Find Shortest Route
+                    </button>
+                    
+                    <div class="map-container">
+                        <i class="fas fa-map-marked-alt" style="font-size: 48px;"></i>
+                        <p style="margin-top: 16px;">Map will be integrated with Android MapView</p>
+                    </div>
+                    
+                    <div class="travel-prediction">
+                        <div class="prediction-text">Predicted battery upon arrival:</div>
+                        <div class="prediction-value">42%</div>
+                        <div class="prediction-text" style="color: var(--samsung-green);">Sufficient for your journey</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Travel Tips</h2>
+                    <ul style="padding-left: 20px; color: var(--text-secondary);">
+                        <li style="margin-bottom: 10px;">Enable Power Saver mode during travel</li>
+                        <li style="margin-bottom: 10px;">Close unused apps running in background</li>
+                        <li style="margin-bottom: 10px;">Reduce screen brightness for better battery life</li>
+                        <li>Turn off 5G if not needed for navigation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Battery Health Screen -->
+            <div id="health" class="screen">
+                <h1>Battery Health</h1>
+                
+                <div class="card">
+                    <h2>App Power Usage</h2>
+                    <div class="app-usage-list">
+                        <div class="app-item">
+                            <div class="app-icon" style="background: linear-gradient(135deg, #ff3366, #ff00c8);">
+                                <i class="fab fa-instagram"></i>
+                            </div>
+                            <div class="app-details">
+                                <div class="app-name">Instagram</div>
+                                <div class="app-usage">2h 15m · <span class="app-battery">22%</span></div>
+                            </div>
+                            <button class="optimize-btn">Optimize</button>
+                        </div>
+                        
+                        <div class="app-item">
+                            <div class="app-icon" style="background: linear-gradient(135deg, #008cff, #00d9ff);">
+                                <i class="fab fa-facebook-messenger"></i>
+                            </div>
+                            <div class="app-details">
+                                <div class="app-name">Messenger</div>
+                                <div class="app-usage">1h 40m · <span class="app-battery">18%</span></div>
+                            </div>
+                            <button class="optimize-btn">Optimize</button>
+                        </div>
+                        
+                        <div class="app-item">
+                            <div class="app-icon" style="background: linear-gradient(135deg, #7b68ee, #00c896);">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="app-details">
+                                <div class="app-name">Google Maps</div>
+                                <div class="app-usage">45m · <span class="app-battery">15%</span></div>
+                            </div>
+                            <button class="optimize-btn">Optimize</button>
+                        </div>
+                        
+                        <div class="app-item">
+                            <div class="app-icon" style="background: linear-gradient(135deg, #00c896, #00d9ff);">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="app-details">
+                                <div class="app-name">WhatsApp</div>
+                                <div class="app-usage">1h 10m · <span class="app-battery">12%</span></div>
+                            </div>
+                            <button class="optimize-btn">Optimize</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Battery Usage Statistics</h2>
+                    <div style="height: 200px;">
+                        <canvas id="healthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Chat Screen -->
+            <div id="ai-chat" class="screen">
+                <h1>Power Assistant</h1>
+                
+                <div class="card" style="height: calc(100% - 100px);">
+                    <div class="chat-container" id="chatContainer">
+                        <div class="message ai-message">
+                            <div class="message-text">Hi there! I'm your Power AI Assistant. I can help you optimize your battery usage and extend your battery life.</div>
+                            <div class="message-time">10:00 AM</div>
+                        </div>
+                        
+                        <div class="message ai-message">
+                            <div class="message-text">I've noticed that Instagram is using a significant amount of battery. Would you like me to suggest some optimizations for it?</div>
+                            <div class="message-time">10:01 AM</div>
+                        </div>
+                        
+                        <div class="message user-message">
+                            <div class="message-text">Yes, please tell me how to reduce Instagram's battery usage.</div>
+                            <div class="message-time">10:02 AM</div>
+                        </div>
+                        
+                        <div class="message ai-message">
+                            <div class="message-text">Great! Here are my suggestions:
+                            <br>1. Disable auto-play for videos
+                            <br>2. Reduce time spent in the app
+                            <br>3. Turn off background app refresh
+                            <br>4. Enable data saver mode</div>
+                            <div class="message-time">10:03 AM</div>
+                        </div>
+
+                        <div class="message ai-message">
+                            <div class="message-text">Based on your usage patterns, I also recommend:
+                            <br>• Closing apps you're not using
+                            <br>• Reducing screen brightness
+                            <br>• Enabling adaptive battery in settings
+                            <br>• Using dark mode whenever possible</div>
+                            <div class="message-time">10:04 AM</div>
+                        </div>
+                    </div>
+                    
+                    <button class="new-chat-btn">
+                        <i class="fas fa-plus"></i> Start New Chat
+                    </button>
+                    
+                    <div class="chat-input">
+                        <input type="text" class="chat-input-field" placeholder="Type your message...">
+                        <button class="chat-send"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts Screen -->
+            <div id="emergency" class="screen">
+                <h1>Emergency Contacts</h1>
+                
+                <div class="card">
+                    <div class="emergency-header">
+                        <h2>My Emergency Contacts</h2>
+                        <button class="add-contact-btn">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    
+                    <div class="contacts-list">
+                        <div class="contact-item">
+                            <div class="contact-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-name">Mom</div>
+                                <div class="contact-number">+1 (555) 123-4567</div>
+                            </div>
+                            <button class="contact-action">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-name">Dad</div>
+                                <div class="contact-number">+1 (555) 987-6543</div>
+                            </div>
+                            <button class="contact-action">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-name">Spouse</div>
+                                <div class="contact-number">+1 (555) 456-7890</div>
+                            </div>
+                            <button class="contact-action">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-name">Best Friend</div>
+                                <div class="contact-number">+1 (555) 234-5678</div>
+                            </div>
+                            <button class="contact-action">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Emergency Mode</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">In emergency mode, your phone will automatically send a message to your contacts with your last location for your safety when your battery goes below 10%.</p>
+                    <button style="background: var(--gradient-primary); border: none; border-radius: 16px; padding: 16px; color: white; font-weight: 600; width: 100%;">
+                        Enable Emergency Mode
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Bar -->
+            <div class="nav-bar">
+                <div class="nav-item active" data-screen="dashboard">
+                    <div class="nav-icon"><i class="fas fa-home"></i></div>
+                    <div>Home</div>
+                </div>
+                <div class="nav-item" data-screen="travel">
+                    <div class="nav-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div>Travel</div>
+                </div>
+                <div class="nav-item" data-screen="health">
+                    <div class="nav-icon"><i class="fas fa-heartbeat"></i></div>
+                    <div>Health</div>
+                </div>
+                <div class="nav-item" data-screen="ai-chat">
+                    <div class="nav-icon"><i class="fas fa-robot"></i></div>
+                    <div>AI</div>
+                </div>
+                <div class="nav-item" data-screen="emergency">
+                    <div class="nav-icon"><i class="fas fa-phone-alt"></i></div>
+                    <div>Emergency</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                
+                // Add active class to clicked nav item
+                this.classList.add('active');
+                
+                // Hide all screens
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                
+                // Show the selected screen
+                const screenId = this.getAttribute('data-screen');
+                document.getElementById(screenId).classList.add('active');
+            });
+        });
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Usage chart
+            const usageCtx = document.getElementById('usageChart').getContext('2d');
+            const usageChart = new Chart(usageCtx, {
+                type: 'line',
+                data: {
+                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
+                    datasets: [{
+                        label: 'Battery Level',
+                        data: [100, 85, 70, 60, 45, 30],
+                        borderColor: '#008cff',
+                        backgroundColor: 'rgba(0, 140, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0a0c0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0a0c0'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Health chart
+            const healthCtx = document.getElementById('healthChart').getContext('2d');
+            const healthChart = new Chart(healthCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Screen', 'Instagram', 'Messenger', 'Maps', 'WhatsApp', 'System'],
+                    datasets: [{
+                        label: 'Battery Usage (%)',
+                        data: [25, 22, 18, 15, 12, 8],
+                        backgroundColor: [
+                            'rgba(0, 140, 255, 0.8)',
+                            'rgba(123, 104, 238, 0.8)',
+                            'rgba(0, 217, 255, 0.8)',
+                            'rgba(0, 200, 150, 0.8)',
+                            'rgba(255, 51, 102, 0.8)',
+                            'rgba(160, 160, 192, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0a0c0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#a0a0c0'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Travel Guardian search functionality
+            const searchBtn = document.querySelector('.search-btn');
+            const searchInput = document.querySelector('.search-input');
+            const routeBtn = document.querySelector('.route-btn');
+            
+            searchBtn.addEventListener('click', function() {
+                if (searchInput.value.trim() !== '') {
+                    calculateRoute();
+                }
+            });
+            
+            routeBtn.addEventListener('click', function() {
+                if (searchInput.value.trim() !== '') {
+                    calculateRoute();
+                } else {
+                    alert('Please enter a destination first');
+                }
+            });
+            
+            function calculateRoute() {
+                // Simulate route calculation and battery prediction
+                const predictionValue = document.querySelector('.prediction-value');
+                const predictionText = document.querySelector('.prediction-text:last-child');
+                
+                // Random battery prediction between 20% and 60%
+                const randomBattery = Math.floor(Math.random() * 40) + 20;
+                predictionValue.textContent = randomBattery + '%';
+                
+                if (randomBattery < 30) {
+                    predictionText.textContent = 'Low battery for your journey';
+                    predictionText.style.color = '#ff3366';
+                } else {
+                    predictionText.textContent = 'Sufficient for your journey';
+                    predictionText.style.color = '#00c896';
+                }
+                
+                // Show notification
+                alert('Shortest route calculated for: ' + searchInput.value);
+            }
+
+            // New chat button
+            document.querySelector('.new-chat-btn').addEventListener('click', function() {
+                const chatContainer = document.getElementById('chatContainer');
+                chatContainer.innerHTML = '';
+                
+                // Add welcome message
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'message ai-message';
+                welcomeMsg.innerHTML = `
+                    <div class="message-text">Hi there! I'm your Power AI Assistant. How can I help you with your battery optimization today?</div>
+                    <div class="message-time">${getCurrentTime()}</div>
+                `;
+                chatContainer.appendChild(welcomeMsg);
+            });
+
+            // AI Chat functionality
+            const chatInput = document.querySelector('.chat-input-field');
+            const chatSend = document.querySelector('.chat-send');
+            const chatContainer = document.getElementById('chatContainer');
+            
+            function addMessage(text, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
+                
+                const messageText = document.createElement('div');
+                messageText.className = 'message-text';
+                messageText.textContent = text;
+                
+                const messageTime = document.createElement('div');
+                messageTime.className = 'message-time';
+                messageTime.textContent = getCurrentTime();
+                
+                messageDiv.appendChild(messageText);
+                messageDiv.appendChild(messageTime);
+                
+                chatContainer.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // Clear input
+                chatInput.value = '';
+            }
+            
+            function getCurrentTime() {
+                const now = new Date();
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                return `${hours}:${minutes} ${ampm}`;
+            }
+            
+            chatSend.addEventListener('click', function() {
+                if (chatInput.value.trim() !== '') {
+                    addMessage(chatInput.value, true);
+                    
+                    // Simulate AI response after a delay
+                    simulateAIResponse(chatInput.value);
+                }
+            });
+            
+            // Allow sending message with Enter key
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    chatSend.click();
+                }
+            });
+
+            function simulateAIResponse(userMessage) {
+                let response;
+                
+                // Fixed the when statement to use standard JavaScript if/else
+                if (userMessage.includes('battery') || userMessage.includes('charge')) {
+                    response = "Based on your current usage, I recommend enabling Power Saving mode and closing background apps to extend your battery life.";
+                } else if (userMessage.includes('travel') || userMessage.includes('trip')) {
+                    response = "For travel, I suggest enabling Travel Guardian mode which will predict your battery usage along your route and suggest optimizations.";
+                } else if (userMessage.includes('optimize') || userMessage.includes('save')) {
+                    response = "I've analyzed your usage patterns. Try reducing screen brightness and limiting background data for social media apps to save battery.";
+                } else if (userMessage.includes('emergency') || userMessage.includes('contact')) {
+                    response = "Emergency mode will automatically notify your contacts with your location when battery drops below 10%. You can set it up in the Emergency tab.";
+                } else {
+                    response = "I'm analyzing your request. Based on your current battery health, I recommend regular optimization and avoiding extreme temperatures for better battery longevity.";
+                }
+                
+                // Simulate typing delay
+                setTimeout(() => {
+                    addMessage(response, false);
+                }, 1000);
+            }
+
+            // Emergency contact calling simulation
+            document.querySelectorAll('.contact-action').forEach(button => {
+                button.addEventListener('click', function() {
+                    const contactName = this.closest('.contact-item').querySelector('.contact-name').textContent;
+                    alert(`Calling ${contactName}...`);
+                });
+            });
+
+            // Optimize app buttons
+            document.querySelectorAll('.optimize-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const appName = this.closest('.app-item').querySelector('.app-name').textContent;
+                    alert(`Optimizing ${appName}...`);
+                    
+                    // Simulate optimization
+                    setTimeout(function() {
+                        alert(`${appName} has been optimized! Battery usage reduced.`);
+                    }, 1500);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
